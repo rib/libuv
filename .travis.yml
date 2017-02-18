@@ -30,6 +30,7 @@ before_install:
     - git push --tags git@github.com:rib/libuv.git
 
 script:
+    - ./autogen.sh
     - ./configure --prefix=$TRAVIS_BUILD_DIR/libuv-${TRAVIS_TAG}-x86_64-travis-ci && make V=1 && make V=1 install
     - tar -cvjf libuv-${TRAVIS_TAG}-x86_64-travis-ci.tar.bz2 libuv-${TRAVIS_TAG}-x86_64-travis-ci
 
