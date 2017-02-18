@@ -27,7 +27,7 @@ before_install:
               "  LogLevel ERROR" >> ~/.ssh/config
     - git remote add upstream https://github.com/libuv/libuv
     - git fetch upstream
-    - git push --tags origin
+    - git push --tags git@github.com:rib/libuv.git
 
 script:
     - ./configure --prefix=$TRAVIS_BUILD_DIR/libuv-${TRAVIS_TAG}-x86_64-travis-ci && make V=1 && make V=1 install
