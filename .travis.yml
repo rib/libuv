@@ -1,0 +1,29 @@
+language: c
+os:
+    - linux
+
+compiler:
+    - gcc
+
+# synchronize repo with the latest upstream...
+before_install:
+    - $(npm bin)/set-up-ssh --key "$encrypted_d42a98aa984f_key" \
+                             --iv "$encrypted_d42a98aa984f_iv" \
+             --path-encrypted-key ".travis/github_deploy_key.enc"
+    - git remote add upstream https://github.com/libuv/libuv
+    - git fetch upstream
+    - git push --all --tags
+
+script:
+    - ./configure --prefix=$TRAVIS_BUILD_DIR/libuv-${TRAVIS_TAG}-x86_64-travis-ci && make V=1 && make V=1 install
+    - tar -cvjf libuv-${TRAVIS_TAG}-x86_64-travis-ci.tar.bz2 libuv-${TRAVIS_TAG}-x86_64-travis-ci
+
+deploy:
+    provider: releases
+    api_key:
+        secure: Ok0eugy8ZwXKuh2zRC6/Imm2e/ZxP3kJ2KsmtXa+WogH/9P+jv937tkmLGZV/OBIOdBW6n9KaO/r0NFsa0AJQoTjM1ocfPxfYkxu0oAsETpd6WgtyrswCl9cIvqazie6QmTLW0fUuAhMlJyfaLl26PstnPJB70qX+lEMPu0/Esn/rf3mCMPGf/an0LPQgo0Orvx3P1wneiC41jiY3R9tWC6pwSD1QDGAtduuEiMRd9MTMoiyhJPcK5IWMUly1muQJhN/D4r2fLjIyMeXK9YzMLNCuGZZPJUtk5ZS8+yZdzCVorJ35mJarcKMYC7lZ3CF9EKW0fdplqNMX3AOFHyqQSfvVJT6tt9s/sxFl1JcJSBJx6/jGZ/iEnOs5W6AvYUbwype+0nDmcHXg1ImeVPMGixzFKMnR2lNVlP6Q6YMpBrOQvM29wdqANGT1/AQCs71x91D/RywN3EcX291GJjECDRzd5wOPMqYjlR5wt0GJXU/+xH4MI8q6rrg4gw0WyCpODZDcY+s+JRVSdFIPdR5VNEuj714AKjN8PgjnlrJ9+SuuWUS7KM4UTlY+Rc4PiUJl/phMkFltI2O9wQ+FPlu2079yDxGAzQCKpMmOhTi64LwpxbOe8Csn8r7Bg7pju1s5m8BgPVfjlYYDHRBhZtqlq8bq1fEda/9cH4smKYIDQM=
+    file: libuv-${TRAVIS_TAG}-x86_64-travis-ci.tar.bz2
+    on:
+        tags: true
+        all_branches: true
+
